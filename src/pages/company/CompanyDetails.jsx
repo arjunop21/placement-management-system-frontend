@@ -130,24 +130,24 @@ const CompanyDetails = () => {
           <Box sx={{ p: { xs: 2, sm: 3 } }}>
             <Grid container spacing={3}>
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption">Website</Typography>
+                <Typography variant="caption" fontWeight={900} color="#123A7C">Website</Typography>
                 <Typography>{company.website || "-"}</Typography>
               </Grid>
 
               <Grid item xs={12} sm={6}>
-                <Typography variant="caption">Status</Typography>
+                <Typography variant="caption" fontWeight={900} color="#123A7C">Status</Typography>
                 <Typography>{company.status || "-"}</Typography>
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="caption">Address</Typography>
+                <Typography variant="caption" fontWeight={900} color="#123A7C">Address</Typography>
                 <Typography>{formatAddress(company)}</Typography>
               </Grid>
             </Grid>
 
             {/* About */}
             <Box sx={{ mt: 3 }}>
-              <Typography variant="subtitle2" fontWeight={600}>
+              <Typography variant="subtitle2" fontWeight={600} color="#123A7C">
                 About Company
               </Typography>
               <Typography sx={{ mt: 1 }}>

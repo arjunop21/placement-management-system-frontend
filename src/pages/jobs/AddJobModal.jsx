@@ -16,6 +16,7 @@ import {
 import { createJob } from "../../services/jobService";
 import { getAllCompanyNames } from "../../services/companyService";
 import { getContacts } from "../../services/contactService";
+import { Autocomplete } from "@mui/material";
 
 const initialFormState = {
   companyId: "",
@@ -127,11 +128,11 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
       open={open}
       onClose={handleClose}
       fullScreen={isMobile}
-      maxWidth="md"
+      maxWidth="sm"
       fullWidth
       PaperProps={{
         sx: {
-          borderRadius: isMobile ? 0 : 4,
+          borderRadius: isMobile ? 3 : 4,
           background: isMobile
             ? "linear-gradient(135deg, #f8fafc, #e2e8f0)"
             : "linear-gradient(135deg, rgba(225, 227, 233, 0.95), rgb(193, 197, 212))",
@@ -155,34 +156,41 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
 
       <DialogContent
         sx={{
-          mt: 1,
-          px: { xs: 1.5, sm: 3 },
+          mt: 1.5,
+          px: { xs: 3, sm: 5 },
           py: { xs: 2, sm: 3 },
         }}
       >
-        <Grid container spacing={2.5}>
+        <Grid container spacing={3}>
           {/* Company and Contact - Side by side */}
-          <Grid item xs={12} md={6}>
-            <TextField
-              select
+          <Grid item xs={12}>
+            <Autocomplete
               fullWidth
-              label="Company *"
-              name="companyId"
-              value={formData.companyId}
-              onChange={handleChange}
-              SelectProps={{
-                displayEmpty: true,
-                renderValue: (v) =>
-                  !v ? "Select company" : companies.find((x) => x._id === v)?.companyName || v,
+              options={companies || []}
+              getOptionLabel={(option) => option.companyName || ""}
+              isOptionEqualToValue={(option, value) => option._id === value._id}
+              value={companies.find((c) => c._id === formData.companyId) || null}
+              onChange={(event, newValue) => {
+                setFormData({
+                  ...formData,
+                  companyId: newValue ? newValue._id : "",
+                });
               }}
-            >
-              <MenuItem value=""><em>Select company</em></MenuItem>
-              {companies.map((c) => (
-                <MenuItem key={c._id} value={c._id}>
-                  {c.companyName}
-                </MenuItem>
-              ))}
-            </TextField>
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Company"
+                  placeholder="Select company"
+                  fullWidth
+                />
+              )}
+              sx={{
+                width: { xs: 200, md: 450 },
+                "& .MuiOutlinedInput-root": {
+                  height: { xs: "auto", md: "56px" }
+                }
+              }}
+            />
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -205,6 +213,12 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
                       ? `${contacts.find((x) => x._id === v)?.name} (${contacts.find((x) => x._id === v)?.email})`
                       : v,
               }}
+              sx={{
+                width: { xs: 200, md: 210 },
+                "& .MuiOutlinedInput-root": {
+                  height: { xs: "auto", md: "56px" }
+                }
+              }}
             >
               <MenuItem value="">
                 <em>{formData.companyId ? "Select contact" : "Select company first"}</em>
@@ -217,12 +231,10 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
             </TextField>
           </Grid>
 
-          <Grid item xs={12}>
-            <Divider sx={{ my: 2.5 }} />
-          </Grid>
+          
 
           {/* Role - Full width */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               required
@@ -243,6 +255,12 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               name="jobDescription"
               value={formData.jobDescription}
               onChange={handleChange}
+              sx={{
+                width: { xs: 220, md: 470 },
+                "& .MuiOutlinedInput-root": {
+                  height: { xs: "auto", md: "5em" }
+                }
+              }}
             />
           </Grid>
 
@@ -256,6 +274,12 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               name="requirements"
               value={formData.requirements}
               onChange={handleChange}
+              sx={{
+                width: { xs: 220, md: 470 },
+                "& .MuiOutlinedInput-root": {
+                  height: { xs: "auto", md: "5em" }
+                }
+              }}
             />
           </Grid>
 
@@ -285,7 +309,7 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
           </Grid>
 
           {/* Package - Full width */}
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               type="number"
@@ -297,24 +321,17 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
             />
           </Grid>
 
-          {/* Location - Three fields side by side */}
-          {/* <Grid item xs={12}>
-            <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 1, mb: 1, fontWeight: 500 }}>
-              Location
-            </Typography>
-          </Grid> */}
-
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="City"
-              name="city"
-              value={formData.location.city}
+              label="Country"
+              name="country"
+              value={formData.location.country}
               onChange={handleChange}
             />
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
               label="State"
@@ -324,15 +341,17 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
             />
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={6}>
             <TextField
               fullWidth
-              label="Country"
-              name="country"
-              value={formData.location.country}
+              label="City"
+              name="city"
+              value={formData.location.city}
               onChange={handleChange}
             />
           </Grid>
+
+
 
           {/* Opening Date and Closing Date - Side by side */}
           <Grid item xs={12} md={6}>
@@ -344,6 +363,12 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               value={formData.openingDate}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
+              sx={{
+                width: { xs: 220, md: 220 },
+                "& .MuiOutlinedInput-root": {
+                  height: { xs: "auto", md: "3.5em" }
+                }
+              }}
             />
           </Grid>
 
@@ -356,6 +381,12 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               value={formData.expiryDate}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
+              sx={{
+                width: { xs: 220, md: 220 },
+                "& .MuiOutlinedInput-root": {
+                  height: { xs: "auto", md: "3.5em" }
+                }
+              }}
             />
           </Grid>
         </Grid>
@@ -374,7 +405,7 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
         <Button
           onClick={handleClose}
           fullWidth={isMobile}
-          backgroundColor= "#5b7ec5"
+          backgroundColor="#5b7ec5"
           sx={{ color: isMobile ? "text.primary" : "#04060c" }}
         >
           Cancel

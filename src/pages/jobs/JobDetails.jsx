@@ -71,7 +71,7 @@ const JobDetails = () => {
   const normalizedStatus = String(job.status || "").toUpperCase();
   const statusColor =
     normalizedStatus === "ACTIVE" ? "success" :
-    normalizedStatus === "EXPIRED" ? "default" : "error";
+      normalizedStatus === "EXPIRED" ? "default" : "error";
 
   const requirementsItems = (job.requirements ?? "")
     .split(/[\n,]+/g)
@@ -183,36 +183,35 @@ const JobDetails = () => {
           <Box sx={{ p: { xs: 2.5, md: 4 } }}>
             <Grid container spacing={2.5}>
               {[
-                { label: "Company",     value: job.companyId?.companyName || "—" },
-                { label: "Status",      value: job.status || "—" },
-                { label: "Package (LPA)", value: job.package ?? "—" },
+                { label: "Company", value: job.companyId?.companyName || "—", color: "#123A7C" },
+                { label: "Status", value: job.status || "—", color: "#123A7C" },
+                { label: "Package (LPA)", value: job.package ?? "—", color: "#123A7C" },
                 {
                   label: "Experience",
                   value:
                     job.experience?.min != null && job.experience?.max != null
                       ? `${job.experience.min} – ${job.experience.max} years`
-                      : "—",
+                      : "—", color: "#123A7C"
                 },
-                { label: "Opening Date", value: formatDate(job.openingDate) },
-                { label: "Expiry Date",  value: formatDate(job.expiryDate) },
+                { label: "Opening Date", value: formatDate(job.openingDate), color: "#123A7C" },
+                { label: "Expiry Date", value: formatDate(job.expiryDate), color: "#123A7C" },
                 {
                   label: "Location",
                   value:
                     [job.location?.city, job.location?.state, job.location?.country]
                       .filter(Boolean)
-                      .join(", ") || "—",
+                      .join(", ") || "—", color: "#123A7C"
                 },
               ].map((item) => (
                 <Grid item key={item.label} xs={12} sm={6} md={4}>
                   <Typography
-                    variant="caption"
-                    color="text.secondary"
+                    color={item.color || "text.secondary"}
                     fontWeight={600}
-                    gutterBottom
+                    sx={{ fontSize: "0.9rem", mb: 0.5, display: "block" }}
                   >
                     {item.label}
                   </Typography>
-                  <Typography variant="body1" fontWeight={500}>
+                  <Typography variant="body1" fontWeight={500} sx={{ fontSize: "1.05rem" }}>
                     {item.value}
                   </Typography>
                 </Grid>
@@ -221,7 +220,7 @@ const JobDetails = () => {
 
             {/* Requirements */}
             <Box sx={{ mt: { xs: 3.5, md: 4.5 } }}>
-              <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+              <Typography variant="subtitle1" fontWeight={600} color="#123A7C" gutterBottom>
                 Requirements
               </Typography>
               {requirementsItems.length > 0 ? (
@@ -241,7 +240,7 @@ const JobDetails = () => {
 
             {/* Job Description */}
             <Box sx={{ mt: { xs: 3.5, md: 4.5 } }}>
-              <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+              <Typography variant="subtitle1" fontWeight={600} color="#123A7C" gutterBottom>
                 Job Description
               </Typography>
               <Typography
