@@ -18,6 +18,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { useTheme, useMediaQuery, Card, CardContent } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import {
   getCompanies,
@@ -36,6 +37,7 @@ const Companies = () => {
   const [openAdd, setOpenAdd] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const navigate = useNavigate();
 
   // const [newCompany, setNewCompany] = useState({
   //   companyName: "",
@@ -193,7 +195,7 @@ const Companies = () => {
                       variant="contained"
                       sx={{ mr: 1 }}
                       onClick={() =>
-                        (window.location.href = `/companies/${company._id}`)
+                        navigate(`/companies/${company._id}`)
                         //onClick={() => navigate(`/companies/${company._id}`)}
                       }
                     >
