@@ -258,7 +258,11 @@ const Jobs = () => {
                       variant="contained"
                       size="small"
                       fullWidth
-                      onClick={() => (window.location.href = `/jobs/${job._id}`)}
+                      onClick={() => navigate(`/jobs/${job._id}`)}
+
+                      // onClick={() =>
+                      //   navigate(`/jobs/${job._id}`)
+                      // }
                     >
                       View
                     </Button>

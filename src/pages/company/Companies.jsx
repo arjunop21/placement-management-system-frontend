@@ -196,7 +196,6 @@ const Companies = () => {
                       sx={{ mr: 1 }}
                       onClick={() =>
                         navigate(`/companies/${company._id}`)
-                        //onClick={() => navigate(`/companies/${company._id}`)}
                       }
                     >
                       View
