@@ -1,6 +1,7 @@
 import axios from "axios";
+import { API_BASE_URL } from "./apiConfig";
 
-const API_URL = "http://localhost:5000/api/jobs";
+const API_URL = `${API_BASE_URL}/api/jobs`;
 
 const getAuthHeader = () => ({
   headers: {
@@ -57,4 +58,3 @@ export const updateJob = async (id, jobData) => {
 export const deleteJob = async (id) => {
   return axios.delete(`${API_URL}/${id}`, getAuthHeader());
 };
-
