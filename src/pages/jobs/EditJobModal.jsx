@@ -31,6 +31,8 @@ const EditJobModal = ({ open, handleClose, jobData, refreshJob }) => {
     location: { city: "", state: "", country: "" },
     openingDate: "",
     expiryDate: "",
+    interviewDate: "",   // ✅ ADD
+    remarks: "",         // ✅ ADD
   });
   const [companies, setCompanies] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -68,6 +70,8 @@ const EditJobModal = ({ open, handleClose, jobData, refreshJob }) => {
       },
       openingDate: toDateInputValue(jobData.openingDate),
       expiryDate: toDateInputValue(jobData.expiryDate),
+      interviewDate: toDateInputValue(jobData.interviewDate), // ✅ ADD
+      remarks: jobData.remarks || "",
     });
   }, [open, jobData]);
 
@@ -138,6 +142,8 @@ const EditJobModal = ({ open, handleClose, jobData, refreshJob }) => {
         },
         openingDate: formData.openingDate,
         expiryDate: formData.expiryDate,
+        interviewDate: formData.interviewDate, // ✅ ADD
+        remarks: formData.remarks,
       };
       await updateJob(jobData._id, payload);
       handleClose();
@@ -269,6 +275,18 @@ const EditJobModal = ({ open, handleClose, jobData, refreshJob }) => {
             />
           </Grid>
 
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              multiline
+              rows={2}
+              label="Remarks"
+              name="remarks"
+              value={formData.remarks}
+              onChange={handleChange}
+            />
+          </Grid>
+
           <Grid item xs={6}>
             <TextField
               fullWidth
@@ -354,6 +372,17 @@ const EditJobModal = ({ open, handleClose, jobData, refreshJob }) => {
               InputLabelProps={{ shrink: true }}
             />
           </Grid>
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              type="date"
+              label="Interview Date"
+              name="interviewDate"
+              value={formData.interviewDate}
+              onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
+            />
+          </Grid>
         </Grid>
       </DialogContent>
 
@@ -385,7 +414,7 @@ const EditJobModal = ({ open, handleClose, jobData, refreshJob }) => {
 
         <Button
           onClick={handleClose}
-          backgroundColor= "#454b57"
+          backgroundColor="#454b57"
           sx={{
             color: "#02050a",
             textTransform: "none",

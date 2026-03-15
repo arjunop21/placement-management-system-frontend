@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -29,6 +30,7 @@ import { getAllCompanyNames } from "../../services/companyService";
 import AddJobModal from "./AddJobModal";
 
 const Jobs = () => {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
@@ -36,6 +38,7 @@ const Jobs = () => {
   const [companies, setCompanies] = useState([]);
   const [companyId, setCompanyId] = useState("");
   const [status, setStatus] = useState("");
+  const [interviewDate, setInterviewDate] = useState("");
 
   const [deleteId, setDeleteId] = useState(null);
   const [openAdd, setOpenAdd] = useState(false);
@@ -51,6 +54,7 @@ const Jobs = () => {
         keyword,
         companyId: companyId || undefined,
         status: status || undefined,
+        interviewDate: interviewDate || undefined,
       });
       setJobs(res.data.data);
       setPages(res.data.pages);
@@ -61,7 +65,7 @@ const Jobs = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, [page, keyword, companyId, status]);
+  }, [page, keyword, companyId, status, interviewDate]); // ✅ ADD interviewDate
 
   useEffect(() => {
     const fetchCompanies = async () => {
@@ -177,6 +181,18 @@ const Jobs = () => {
           <MenuItem value="CLOSED">CLOSED</MenuItem>
         </TextField>
 
+        <TextField
+          type="date"
+          size="small"
+          value={interviewDate}
+          onChange={(e) => {
+            setInterviewDate(e.target.value);
+            setPage(1);
+          }}
+          fullWidth={isMobile}
+          sx={{ minWidth: { sm: 180 }, flex: { sm: 1 } }}
+        />
+
         <Button
           variant="contained"
           fullWidth={isMobile}
@@ -210,9 +226,20 @@ const Jobs = () => {
                 }}
               >
                 <CardContent sx={{ pb: 2 }}>
-                  <Typography variant="h6" fontWeight="bold" gutterBottom>
-                    {job.role}
-                  </Typography>
+                    <Button
+                      variant="text"
+                      onClick={() => navigate(`/candidates?jobId=${encodeURIComponent(job._id)}`)}
+                      sx={{
+                        p: 0,
+                        minWidth: 0,
+                        textTransform: "none",
+                        justifyContent: "flex-start",
+                    }}
+                  >
+                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                      {job.role}
+                    </Typography>
+                  </Button>
 
                   <Typography variant="body2" color="text.secondary" gutterBottom>
                     <strong>Company:</strong> {job.companyId?.companyName || "—"}
@@ -259,6 +286,7 @@ const Jobs = () => {
                 <TableCell sx={{ color: "#fff", fontWeight: 600 }}>Role</TableCell>
                 <TableCell sx={{ color: "#fff", fontWeight: 600 }}>Company</TableCell>
                 <TableCell sx={{ color: "#fff", fontWeight: 600 }}>Email</TableCell>
+                <TableCell sx={{ color: "#fff", fontWeight: 600 }}>Interview Date</TableCell>
                 <TableCell sx={{ color: "#fff", fontWeight: 600 }}>Status</TableCell>
                 <TableCell sx={{ color: "#fff", fontWeight: 600 }}>Actions</TableCell>
               </TableRow>
@@ -273,9 +301,23 @@ const Jobs = () => {
                     "&:last-child td, &:last-child th": { border: 0 },
                   }}
                 >
-                  <TableCell>{job.role}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="text"
+                      size="small"
+                      onClick={() => navigate(`/candidates?jobId=${encodeURIComponent(job._id)}`)}
+                      sx={{ textTransform: "none", px: 0, minWidth: 0 }}
+                    >
+                      {job.role}
+                    </Button>
+                  </TableCell>
                   <TableCell>{job.companyId?.companyName || "—"}</TableCell>
                   <TableCell>{job.contactId?.email || "—"}</TableCell>
+                  <TableCell>
+                    {job.interviewDate
+                      ? new Date(job.interviewDate).toLocaleDateString("en-IN")
+                      : "—"}
+                  </TableCell>
                   <TableCell>{renderStatusChip(job.status)}</TableCell>
                   <TableCell>
                     <Button

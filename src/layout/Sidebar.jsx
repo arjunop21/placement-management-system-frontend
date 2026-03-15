@@ -30,6 +30,7 @@ const Sidebar = ({ onNavigate }) => {
     { text: "Companies", icon: <BusinessIcon />, path: "/Companies" },
     { text: "Contacts", icon: <ContactsIcon />, path: "/contacts" },
     { text: "Jobs", icon: <WorkIcon />, path: "/jobs" },
+    { text: "Candidates", icon: <PeopleIcon />, path: "/candidates" },
     { text: "Users", icon: <PeopleIcon />, path: "/users" },
   ];
 

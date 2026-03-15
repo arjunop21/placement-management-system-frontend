@@ -29,6 +29,8 @@ const initialFormState = {
   location: { city: "", state: "", country: "" },
   openingDate: "",
   expiryDate: "",
+  interviewDate: "",     // ← new
+  remarks: "",
 };
 
 const AddJobModal = ({ open, handleClose, refreshJobs }) => {
@@ -113,6 +115,8 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
         location: formData.location,
         openingDate: formData.openingDate,
         expiryDate: formData.expiryDate,
+        interviewDate: formData.interviewDate || null,   // ← new (can be empty)
+        remarks: formData.remarks?.trim() || "",         // ← new
       };
       await createJob(payload);
       setFormData(initialFormState);
@@ -198,21 +202,22 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               select
               fullWidth
               label="Contact"
+              placeholder="Select contact"
               name="contactId"
               value={formData.contactId}
               onChange={handleChange}
               disabled={!formData.companyId || loadingContacts}
-              SelectProps={{
-                displayEmpty: true,
-                renderValue: (v) =>
-                  !v
-                    ? formData.companyId
-                      ? "Select contact"
-                      : "Select company first"
-                    : contacts.find((x) => x._id === v)
-                      ? `${contacts.find((x) => x._id === v)?.name} (${contacts.find((x) => x._id === v)?.email})`
-                      : v,
-              }}
+              // SelectProps={{
+              //   displayEmpty: true,
+              //   renderValue: (v) =>
+              //     !v
+              //       ? formData.companyId
+              //         ? ""
+              //         : ""
+              //       : contacts.find((x) => x._id === v)
+              //         ? `${contacts.find((x) => x._id === v)?.name} (${contacts.find((x) => x._id === v)?.email})`
+              //         : v,
+              // }}
               sx={{
                 width: { xs: 200, md: 210 },
                 "& .MuiOutlinedInput-root": {
@@ -221,7 +226,7 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               }}
             >
               <MenuItem value="">
-                <em>{formData.companyId ? "Select contact" : "Select company first"}</em>
+                {/* <em>{formData.companyId ? "Select contact" : "Select company first"}</em> */}
               </MenuItem>
               {contacts.map((c) => (
                 <MenuItem key={c._id} value={c._id}>
@@ -231,7 +236,7 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
             </TextField>
           </Grid>
 
-          
+
 
           {/* Role - Full width */}
           <Grid item xs={12} md={6}>
@@ -250,16 +255,22 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
             <TextField
               fullWidth
               multiline
-              rows={isMobile ? 4 : 5}
+              rows={isMobile ? 5 : 8}
               label="Description"
               name="jobDescription"
               value={formData.jobDescription}
               onChange={handleChange}
               sx={{
-                width: { xs: 220, md: 470 },
-                "& .MuiOutlinedInput-root": {
-                  height: { xs: "auto", md: "5em" }
-                }
+                mt: 1,
+                mb: 1,
+                '& .MuiOutlinedInput-root': {
+                  // Fixed height container → internal scroll appears when needed
+                  height: { xs: 120, md: 90 },
+                  width: { md: 460 },
+                  alignItems: 'flex-start',
+                  padding: { xs: '12px 14px', md: '16px 18px' },
+                  // overflowY: 'auto',           // ← important
+                },
               }}
             />
           </Grid>
@@ -275,10 +286,16 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               value={formData.requirements}
               onChange={handleChange}
               sx={{
-                width: { xs: 220, md: 470 },
-                "& .MuiOutlinedInput-root": {
-                  height: { xs: "auto", md: "5em" }
-                }
+                mt: 1,
+                mb: 1,
+                '& .MuiOutlinedInput-root': {
+                  // Fixed height container → internal scroll appears when needed
+                  height: { xs: 120, md: 90 },
+                  width: { md: 460 },
+                  alignItems: 'flex-start',
+                  padding: { xs: '12px 14px', md: '13px 18px' },
+                  // overflowY: 'auto',           // ← important
+                },
               }}
             />
           </Grid>
@@ -386,6 +403,48 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
                 "& .MuiOutlinedInput-root": {
                   height: { xs: "auto", md: "3.5em" }
                 }
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              type="date"
+              label="Interview Date"
+              name="interviewDate"
+              value={formData.interviewDate}
+              onChange={handleChange}
+              InputLabelProps={{ shrink: true }}
+              helperText="Date when interview is scheduled (optional)"
+              sx={{
+                width: { xs: 220, md: 220 },
+                "& .MuiOutlinedInput-root": {
+                  height: { xs: "auto", md: "3.5em" }
+                }
+              }}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <TextField
+              fullWidth
+              multiline
+              rows={isMobile ? 3 : 4}
+              label="Remarks"
+              name="remarks"
+              value={formData.remarks}
+              onChange={handleChange}
+              placeholder="Any notes, status, follow-up actions..."
+              helperText="Internal notes about this job opening"
+              sx={{
+                // mt: 1,
+                mb: 1,
+                '& .MuiOutlinedInput-root': {
+                  alignItems: 'flex-start',
+                  padding: { xs: '12px 14px', md: '16px 18px' },
+                  minHeight: { xs: 100, md: 120 },
+                },
               }}
             />
           </Grid>

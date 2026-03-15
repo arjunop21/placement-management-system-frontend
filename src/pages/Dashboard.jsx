@@ -15,6 +15,8 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import Topbar from "../layout/Topbar";
+import { useEffect, useState } from "react";
+import { getDashboardCounts } from "../services/companyService";
 
 const StatCard = ({ title, value, color }) => (
   <Card
@@ -48,12 +50,43 @@ const Dashboard = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const stats = {
-    totalCompanies: 32,
-    totalContacts: 120,
-    activeJobs: 15,
-    expiredJobs: 4,
-  };
+  const [stats, setStats] = useState({
+    totalCompanies: 0,
+    totalContacts: 0,
+    activeJobs: 0,
+    expiredJobs: 0,
+  });
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadCounts = async () => {
+      try {
+        const response = await getDashboardCounts();
+        const data = response?.data?.data;
+        if (!data || !isMounted) return;
+        setStats({
+          totalCompanies: data.totalCompanies ?? 0,
+          totalContacts: data.totalContacts ?? 0,
+          activeJobs: data.activeJobs ?? 0,
+          expiredJobs: data.expiredJobs ?? 0,
+        });
+      } catch (error) {
+        if (!isMounted) return;
+        setStats({
+          totalCompanies: 0,
+          totalContacts: 0,
+          activeJobs: 0,
+          expiredJobs: 0,
+        });
+      }
+    };
+
+    loadCounts();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const recentJobs = [
     { title: "Software Developer", company: "TCS", status: "Active" },

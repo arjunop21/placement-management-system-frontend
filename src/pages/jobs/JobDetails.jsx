@@ -12,6 +12,8 @@ import {
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import { getJobById } from "../../services/jobService";
 import EditJobModal from "./EditJobModal";
+import { createCandidate } from "../../services/candidateService";
+import AddModalCandidate from "../candidate/AddModalCandidate";
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "—";
@@ -30,6 +32,12 @@ const JobDetails = () => {
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [openEdit, setOpenEdit] = useState(false);
+  const [openCandidateModal, setOpenCandidateModal] = useState(false);
+  const [candidateName, setCandidateName] = useState("");
+  const [interviewRounds, setInterviewRounds] = useState("");
+  const [candidateNames, setCandidateNames] = useState([]);
+  const [savingCandidate, setSavingCandidate] = useState(false);
+  const [candidateError, setCandidateError] = useState("");
 
   const fetchJob = async () => {
     if (!id) return;
@@ -78,6 +86,57 @@ const JobDetails = () => {
     .map((s) => s.trim())
     .filter(Boolean);
 
+  const handleAddCandidateName = () => {
+    const trimmed = candidateName.trim();
+    if (!trimmed) return;
+    setCandidateNames((prev) => [...prev, trimmed]);
+    setCandidateName("");
+  };
+
+  const handleSaveCandidate = async () => {
+    setCandidateError("");
+    const jobOpeningId = job?._id;
+    const companyId = job?.companyId?._id ?? job?.companyId;
+
+    if (!jobOpeningId || !companyId) {
+      setCandidateError("Missing job or company information.");
+      return;
+    }
+
+    if (candidateNames.length === 0) {
+      setCandidateError("Add at least one candidate name.");
+      return;
+    }
+
+    setSavingCandidate(true);
+    try {
+      await createCandidate({
+        candidateNames,
+        interviewRounds,
+        jobOpeningId,
+        companyId,
+      });
+      setCandidateNames([]);
+      setCandidateName("");
+      setInterviewRounds("");
+      setOpenCandidateModal(false);
+      const jobId = job?._id;
+      if (jobId) {
+        navigate(`/candidates?jobId=${encodeURIComponent(jobId)}`);
+      } else {
+        navigate("/candidates");
+      }
+    } catch (error) {
+      setCandidateError("Failed to save candidate details.");
+    } finally {
+      setSavingCandidate(false);
+    }
+  };
+
+  const handleCloseCandidateModal = () => {
+    setOpenCandidateModal(false);
+  };
+
   return (
     <Box
       sx={{
@@ -105,6 +164,24 @@ const JobDetails = () => {
       </Button>
 
       <Box sx={{ width: "100%", maxWidth: { xs: "100%", md: 720, lg: 860 } }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            mb: { xs: 1.5, md: 2 },
+          }}
+        >
+          <Button
+            variant="outlined"
+            onClick={() => setOpenCandidateModal(true)}
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+            }}
+          >
+            Add Candidate
+          </Button>
+        </Box>
 
         <Box
           sx={{
@@ -135,14 +212,29 @@ const JobDetails = () => {
               }}
             >
               <Box>
-                <Typography
-                  variant="h5"
-                  component="h1"
-                  fontWeight={700}
-                  sx={{ mb: 0.5, lineHeight: 1.2 }}
+                <Button
+                  variant="text"
+                  onClick={() =>
+                    navigate(`/candidates?jobId=${encodeURIComponent(job._id)}`)
+                  }
+                  sx={{
+                    p: 0,
+                    minWidth: 0,
+                    textTransform: "none",
+                    color: "white",
+                    justifyContent: "flex-start",
+                    "&:hover": { bgcolor: "transparent", textDecoration: "underline" },
+                  }}
                 >
-                  {job.role}
-                </Typography>
+                  <Typography
+                    variant="h5"
+                    component="h1"
+                    fontWeight={700}
+                    sx={{ mb: 0.5, lineHeight: 1.2 }}
+                  >
+                    {job.role}
+                  </Typography>
+                </Button>
 
                 <Typography variant="body1" sx={{ opacity: 0.9 }}>
                   {job.companyId?.companyName || "—"}
@@ -195,6 +287,7 @@ const JobDetails = () => {
                 },
                 { label: "Opening Date", value: formatDate(job.openingDate), color: "#123A7C" },
                 { label: "Expiry Date", value: formatDate(job.expiryDate), color: "#123A7C" },
+                { label: "Interview Date", value: formatDate(job.interviewDate), color: "#123A7C" },
                 {
                   label: "Location",
                   value:
@@ -248,6 +341,20 @@ const JobDetails = () => {
                 sx={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}
               >
                 {job.jobDescription || "—"}
+              </Typography>
+            </Box>
+
+            {/* Remarks */}
+            <Box sx={{ mt: { xs: 3.5, md: 4.5 } }}>
+              <Typography variant="subtitle1" fontWeight={600} color="#123A7C" gutterBottom>
+                Remarks
+              </Typography>
+
+              <Typography
+                variant="body1"
+                sx={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}
+              >
+                {job.remarks || "—"}
               </Typography>
             </Box>
 
@@ -306,6 +413,20 @@ const JobDetails = () => {
         handleClose={() => setOpenEdit(false)}
         jobData={job}
         refreshJob={fetchJob}
+      />
+
+      <AddModalCandidate
+        open={openCandidateModal}
+        onClose={handleCloseCandidateModal}
+        candidateName={candidateName}
+        setCandidateName={setCandidateName}
+        candidateNames={candidateNames}
+        onAddCandidateName={handleAddCandidateName}
+        interviewRounds={interviewRounds}
+        setInterviewRounds={setInterviewRounds}
+        onSave={handleSaveCandidate}
+        saving={savingCandidate}
+        error={candidateError}
       />
     </Box>
   );

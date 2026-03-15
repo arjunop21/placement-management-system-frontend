@@ -61,3 +61,7 @@ export const getCompanyById = async (id) => {
 export const updateCompany = async (id, companyData) => {
   return axios.put(`${API_URL}/${id}`, companyData, getAuthHeader());
 }
+
+export const getDashboardCounts = async () => {
+  return axios.get(`${API_URL}/dashboard-counts`, getAuthHeader());
+};

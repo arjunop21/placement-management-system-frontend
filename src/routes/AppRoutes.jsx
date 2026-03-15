@@ -9,6 +9,7 @@ import CompanyDetails from "../pages/company/CompanyDetails";
 import Contacts from "../pages/contacts/Contacts";
 import Jobs from "../pages/jobs/Jobs";
 import JobDetails from "../pages/jobs/JobDetails";
+import Candidates from "../pages/candidate/Candidates";
 
 const AppRoutes = () => {
   return (
@@ -56,6 +57,16 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <DashboardLayout>
               <Jobs />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/candidates"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <Candidates />
             </DashboardLayout>
           </ProtectedRoute>
         }

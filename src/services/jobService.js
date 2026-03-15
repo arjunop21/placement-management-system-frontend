@@ -17,6 +17,7 @@ export const getJobs = async ({
   keyword = "",
   companyId,
   status,
+  interviewDate,
 } = {}) => {
   const params = new URLSearchParams();
   params.set("page", String(page));
@@ -24,6 +25,7 @@ export const getJobs = async ({
   if (keyword) params.set("keyword", keyword);
   if (companyId) params.set("companyId", companyId);
   if (status) params.set("status", status);
+  if (interviewDate) params.set("interviewDate", interviewDate); // ✅ ADD
 
   return axios.get(`${API_URL}?${params.toString()}`, getAuthHeader());
 };
