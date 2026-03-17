@@ -5,6 +5,7 @@ import {
   Box,
   Typography,
   Paper,
+  CircularProgress,
 } from "@mui/material";
 import { loginUser } from "../../services/authService";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +17,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -27,6 +30,13 @@ const Login = () => {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setError("");
+    if (!form.email || !form.password) {
+      setError("Please enter email and password.");
+      return;
+    }
+    setIsSubmitting(true);
     try {
       const res = await loginUser(form);
 
@@ -38,7 +48,9 @@ const Login = () => {
 
       navigate("/dashboard");
     } catch (err) {
-      alert("Invalid credentials");
+      setError("Invalid credentials.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -100,9 +112,19 @@ const Login = () => {
             "&:hover": { backgroundColor: "#163172" },
           }}
           onClick={handleSubmit}
+          disabled={isSubmitting}
         >
-          Login
+          {isSubmitting ? (
+            <CircularProgress size={22} sx={{ color: "white" }} />
+          ) : (
+            "Login"
+          )}
         </Button>
+        {error ? (
+          <Typography mt={1.5} fontSize={13} color="error" textAlign="center">
+            {error}
+          </Typography>
+        ) : null}
 
         {/* Register Section */}
         <Typography
