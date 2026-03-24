@@ -17,9 +17,10 @@ import {
   Chip,
   Snackbar,
   Alert,
+  Pagination,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { getCandidates, updateCandidate } from "../../services/candidateService";
+import { getAllCandidates, getCandidates, updateCandidate } from "../../services/candidateService";
 import EditCandidateModal from "./EditCandidateModal";
 
 const formatDate = (dateStr) => {
@@ -79,6 +80,9 @@ const Candidates = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [candidates, setCandidates] = useState([]);
+  const [allCandidates, setAllCandidates] = useState([]);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
@@ -96,10 +100,18 @@ const Candidates = () => {
   const fetchCandidates = async () => {
     setLoading(true);
     try {
-      const res = await getCandidates();
+      const res = await getCandidates({
+        page,
+        limit: 5,
+        keyword: search || undefined,
+        role: roleFilter || undefined,
+        companyName: companyFilter || undefined,
+      });
       setCandidates(res?.data?.data ?? []);
+      setPages(res?.data?.pages ?? 1);
     } catch (error) {
       setCandidates([]);
+      setPages(1);
     } finally {
       setLoading(false);
     }
@@ -107,7 +119,20 @@ const Candidates = () => {
 
   useEffect(() => {
     fetchCandidates();
+  }, [page, search, roleFilter, companyFilter]);
+
+  useEffect(() => {
+    const fetchAll = async () => {
+      try {
+        const all = await getAllCandidates({ limit: 50 });
+        setAllCandidates(all);
+      } catch (error) {
+        setAllCandidates([]);
+      }
+    };
+    fetchAll();
   }, []);
+
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -121,6 +146,7 @@ const Candidates = () => {
     if (role) {
       setRoleFilter(role);
     }
+    setPage(1);
   }, [location.search]);
 
   useEffect(() => {
@@ -143,43 +169,35 @@ const Candidates = () => {
     setSearch("");
     setCompanyFilter("");
     setJobIdFilter("");
+    setPage(1);
     navigate(`/candidates?role=${encodeURIComponent(role)}`);
   };
 
   const roles = useMemo(() => {
     const set = new Set();
-    candidates.forEach((c) => {
+    allCandidates.forEach((c) => {
       const role = getRoleLabel(c);
       if (role && role !== "—") set.add(role);
     });
     return Array.from(set);
-  }, [candidates]);
+  }, [allCandidates]);
 
   const companies = useMemo(() => {
     const set = new Set();
-    candidates.forEach((c) => {
+    allCandidates.forEach((c) => {
       const company = getCompanyLabel(c);
       if (company && company !== "—") set.add(company);
     });
     return Array.from(set);
-  }, [candidates]);
+  }, [allCandidates]);
 
   const filteredCandidates = useMemo(() => {
-    const term = search.trim().toLowerCase();
+    if (!jobIdFilter) return candidates;
     return candidates.filter((c) => {
-      const name = getCandidateName(c).toLowerCase();
-      const role = getRoleLabel(c);
-      const company = getCompanyLabel(c);
-
-      const matchesSearch = term ? name.includes(term) : true;
-      const matchesRole = roleFilter ? role === roleFilter : true;
       const cid = c?.jobOpeningId?._id ?? c?.jobId?._id ?? c?.job?._id ?? c?.jobId;
-      const matchesJobId = jobIdFilter ? cid === jobIdFilter : true;
-      const matchesCompany = companyFilter ? company === companyFilter : true;
-
-      return matchesSearch && matchesRole && matchesJobId && matchesCompany;
+      return cid === jobIdFilter;
     });
-  }, [candidates, search, roleFilter, jobIdFilter, companyFilter]);
+  }, [candidates, jobIdFilter]);
 
   const handleOpenEdit = (candidate) => {
     setSelectedCandidate(candidate);
@@ -242,7 +260,10 @@ const Candidates = () => {
             size="small"
             label="Search Candidate"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             sx={{
               minWidth: 220,
               backgroundColor: "#F3F6FF",
@@ -254,7 +275,10 @@ const Candidates = () => {
             size="small"
             label="Filter by Role"
             value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
+            onChange={(e) => {
+              setRoleFilter(e.target.value);
+              setPage(1);
+            }}
             sx={{
               minWidth: 200,
               backgroundColor: "#F3F6FF",
@@ -273,7 +297,10 @@ const Candidates = () => {
             size="small"
             label="Filter by Company"
             value={companyFilter}
-            onChange={(e) => setCompanyFilter(e.target.value)}
+            onChange={(e) => {
+              setCompanyFilter(e.target.value);
+              setPage(1);
+            }}
             sx={{
               minWidth: 200,
               backgroundColor: "#F3F6FF",
@@ -339,7 +366,19 @@ const Candidates = () => {
                           : undefined
                       }
                     >
-                    <TableCell>{getCandidateName(candidate)}</TableCell>
+                    <TableCell>
+  <Button
+    variant="text"
+    size="small"
+    onClick={() => {
+      const cid = candidate?._id ?? candidate?.id;
+      if (cid) navigate(`/candidates/${cid}`);
+    }}
+    sx={{ textTransform: "none", px: 0, minWidth: 0 }}
+  >
+    {getCandidateName(candidate)}
+  </Button>
+</TableCell>
                     <TableCell>
                       <Button
                         variant="text"
@@ -374,7 +413,24 @@ const Candidates = () => {
           </Table>
         </TableContainer>
       </Paper>
-
+      <Box
+        mt={3}
+        display="flex"
+        justifyContent="center"
+        sx={{
+          "& .MuiPagination-ul": {
+            flexWrap: "wrap",
+            justifyContent: "center",
+          },
+        }}
+      >
+        <Pagination
+          count={pages}
+          page={page}
+          onChange={(e, value) => setPage(value)}
+          color="primary"
+        />
+      </Box>
       <EditCandidateModal
         open={openEdit}
         onClose={() => setOpenEdit(false)}
@@ -403,6 +459,32 @@ const Candidates = () => {
 };
 
 export default Candidates;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

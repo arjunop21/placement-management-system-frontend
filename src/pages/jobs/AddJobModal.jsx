@@ -261,15 +261,22 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               value={formData.jobDescription}
               onChange={handleChange}
               sx={{
-                mt: 1,
-                mb: 1,
+                mt: 0.5,
+                mb: 1.5,
                 '& .MuiOutlinedInput-root': {
                   // Fixed height container → internal scroll appears when needed
-                  height: { xs: 120, md: 90 },
+                  height: { xs: 130, md: 110 },
                   width: { md: 460 },
                   alignItems: 'flex-start',
-                  padding: { xs: '12px 14px', md: '16px 18px' },
-                  // overflowY: 'auto',           // ← important
+                  padding: 0,
+                  overflow: 'hidden',
+                },
+                '& .MuiInputBase-inputMultiline': {
+                  padding: { xs: '12px 14px', md: '14px 16px' },
+                  height: '100%',
+                  boxSizing: 'border-box',
+                  lineHeight: 1.4,
+                  overflow: 'auto',
                 },
               }}
             />
@@ -286,15 +293,22 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
               value={formData.requirements}
               onChange={handleChange}
               sx={{
-                mt: 1,
-                mb: 1,
+                mt: 0.5,
+                mb: 1.5,
                 '& .MuiOutlinedInput-root': {
                   // Fixed height container → internal scroll appears when needed
-                  height: { xs: 120, md: 90 },
+                  height: { xs: 120, md: 100 },
                   width: { md: 460 },
                   alignItems: 'flex-start',
-                  padding: { xs: '12px 14px', md: '13px 18px' },
-                  // overflowY: 'auto',           // ← important
+                  padding: 0,
+                  overflow: 'hidden',
+                },
+                '& .MuiInputBase-inputMultiline': {
+                  padding: { xs: '12px 14px', md: '12px 16px' },
+                  height: '100%',
+                  boxSizing: 'border-box',
+                  lineHeight: 1.4,
+                  overflow: 'auto',
                 },
               }}
             />

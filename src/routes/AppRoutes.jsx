@@ -10,6 +10,7 @@ import Contacts from "../pages/contacts/Contacts";
 import Jobs from "../pages/jobs/Jobs";
 import JobDetails from "../pages/jobs/JobDetails";
 import Candidates from "../pages/candidate/Candidates";
+import CandidateDetails from "../pages/candidate/CandidateDetails";
 
 const AppRoutes = () => {
   return (
@@ -89,6 +90,17 @@ const AppRoutes = () => {
           <ProtectedRoute>
             <DashboardLayout>
               <JobDetails />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/candidates/:id"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <CandidateDetails />
             </DashboardLayout>
           </ProtectedRoute>
         }
