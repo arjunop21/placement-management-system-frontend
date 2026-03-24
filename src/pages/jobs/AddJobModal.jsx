@@ -237,7 +237,6 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
           </Grid>
 
 
-
           {/* Role - Full width */}
           <Grid item xs={12} md={6}>
             <TextField
