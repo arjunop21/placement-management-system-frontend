@@ -146,9 +146,24 @@ const CandidateDetails = () => {
 
   if (orderedHistory.length === 0) {
     return (
-      <Typography variant="h6" color="error" sx={{ mt: 5, textAlign: "center" }}>
-        Candidate history not found
-      </Typography>
+      <Box sx={{ mt: 5, textAlign: "center" }}>
+        <Button
+          variant="text"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate("/candidates")}
+          sx={{
+            mb: 2,
+            color: "text.primary",
+            fontWeight: 500,
+            textTransform: "none",
+          }}
+        >
+          Back to Candidates
+        </Button>
+        <Typography variant="h6" color="error">
+          Candidate history not found
+        </Typography>
+      </Box>
     );
   }
 

@@ -254,7 +254,7 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
             <TextField
               fullWidth
               multiline
-              rows={isMobile ? 5 : 8}
+              rows={isMobile ? 3 : 4}
               label="Description"
               name="jobDescription"
               value={formData.jobDescription}
@@ -263,19 +263,14 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
                 mt: 0.5,
                 mb: 1.5,
                 '& .MuiOutlinedInput-root': {
-                  // Fixed height container → internal scroll appears when needed
-                  height: { xs: 130, md: 110 },
                   width: { md: 460 },
                   alignItems: 'flex-start',
-                  padding: 0,
-                  overflow: 'hidden',
                 },
                 '& .MuiInputBase-inputMultiline': {
                   padding: { xs: '12px 14px', md: '14px 16px' },
-                  height: '100%',
-                  boxSizing: 'border-box',
-                  lineHeight: 1.4,
-                  overflow: 'auto',
+                  lineHeight: 1.6,
+                  overflow: 'auto !important',
+                  resize: 'none',
                 },
               }}
             />
@@ -295,19 +290,14 @@ const AddJobModal = ({ open, handleClose, refreshJobs }) => {
                 mt: 0.5,
                 mb: 1.5,
                 '& .MuiOutlinedInput-root': {
-                  // Fixed height container → internal scroll appears when needed
-                  height: { xs: 120, md: 100 },
                   width: { md: 460 },
                   alignItems: 'flex-start',
-                  padding: 0,
-                  overflow: 'hidden',
                 },
                 '& .MuiInputBase-inputMultiline': {
                   padding: { xs: '12px 14px', md: '12px 16px' },
-                  height: '100%',
-                  boxSizing: 'border-box',
-                  lineHeight: 1.4,
-                  overflow: 'auto',
+                  lineHeight: 1.6,
+                  overflow: 'auto !important',
+                  resize: 'none',
                 },
               }}
             />
